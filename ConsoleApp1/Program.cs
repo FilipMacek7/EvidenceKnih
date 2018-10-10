@@ -25,16 +25,17 @@ namespace ConsoleApp1
                 TypeNameHandling = TypeNameHandling.All
             };
 
-            string jsonFromFile = File.ReadAllText(@"C:\Users\sadbo\Desktop\Škola\C#\EvidenceKnih\ConsoleApp1\ConsoleApp1\books.json");
+
+            string jsonFromFile = File.ReadAllText(@"C:\Users\sadbo\Desktop\Škola\C#\Evidence_knih\ConsoleApp1\books.json");
             books = JsonConvert.DeserializeObject<List<Book>>(jsonFromFile, settings);
 
-            jsonFromFile = File.ReadAllText(@"C:\Users\sadbo\Desktop\Škola\C#\EvidenceKnih\ConsoleApp1\ConsoleApp1\users.json");
+            jsonFromFile = File.ReadAllText(@"C:\Users\sadbo\Desktop\Škola\C#\Evidence_knih\ConsoleApp1\users.json");
             listOfUsers = JsonConvert.DeserializeObject<List<User>>(jsonFromFile, settings);
             void showBooks()
             {
                 for (int i = 0; i < books.Count(); i++)
                 {
-                    Console.Write(i + 1 + " ");
+                    Console.Write(i + " ");
                     Console.Write(books[i].Name);
                     Console.Write(" - ");
                     Console.Write(books[i].Isbn);
@@ -97,41 +98,44 @@ namespace ConsoleApp1
                             loggedin = true;
                             login = false;
                         }
-                        for (int i = 0; i < listOfUsers.Count; i++)
+                        else
                         {
-                            if (listOfUsers[i].Name == username & listOfUsers[i].Password == pass)
+                            for (int i = 0; i < listOfUsers.Count; i++)
                             {
-                                Console.Clear();
-                                Console.WriteLine("You have been succefully log-in");
-                                userType = 0;
-                                login = false;
-                                loggedin = true;
-                                currentUser = username;
-                            }
-                            else
-                            {
-                                Console.Clear();
-                                Console.WriteLine("Wrong username or password.");
-                                Console.WriteLine("");
-                                while (true)
+                                if (listOfUsers[i].Name == username & listOfUsers[i].Password == pass)
                                 {
-                                    Console.WriteLine("Press T to try again");
-                                    Console.WriteLine("Press E to exit to menu");
-                                    choice = Console.ReadKey();
-                                    if (choice.KeyChar == 't')
+                                    Console.Clear();
+                                    Console.WriteLine("You have been succefully log-in");
+                                    userType = 0;
+                                    login = false;
+                                    loggedin = true;
+                                    currentUser = username;
+                                }
+                                else
+                                {
+                                    Console.Clear();
+                                    Console.WriteLine("Wrong username or password.");
+                                    Console.WriteLine("");
+                                    while (true)
                                     {
-                                        Console.Clear();
-                                        break;
-                                    }
-                                    else if (choice.KeyChar == 'e')
-                                    {
-                                        Console.Clear();
-                                        login = false;
-                                        break;
+                                        Console.WriteLine("Press T to try again");
+                                        Console.WriteLine("Press E to exit to menu");
+                                        choice = Console.ReadKey();
+                                        if (choice.KeyChar == 't')
+                                        {
+                                            Console.Clear();
+                                            break;
+                                        }
+                                        else if (choice.KeyChar == 'e')
+                                        {
+                                            Console.Clear();
+                                            login = false;
+                                            break;
+                                        }
                                     }
                                 }
                             }
-                        }                       
+                        }                    
                     }
                     while (loggedin)
                     {
@@ -186,19 +190,7 @@ namespace ConsoleApp1
                                             Console.WriteLine("Book " + name + " have been succefuly added.");
 
                                             string json = JsonConvert.SerializeObject(books, settings);
-                                            File.WriteAllText(@"C:\Users\sadbo\Desktop\Škola\C#\EvidenceKnih\ConsoleApp1\ConsoleApp1\books.json", json);
-                                            using (ExcelPackage excel = new ExcelPackage())
-                                            {
-                                                var ws = excel.Workbook.Worksheets.Add("MySheet");
-
-                                                
-                                                for(int i = 0; i < books.Count(); i++)
-                                                {
-
-                                                }
-                                                FileInfo excelFile = new FileInfo(@"C:\Users\sadbo\Desktop\Škola\C#\EvidenceKnih\ConsoleApp1\ConsoleApp1\excel.xlsx");
-                                                excel.SaveAs(excelFile);
-                                            }
+                                            File.WriteAllText(@"C:\Users\sadbo\Desktop\Škola\C#\Evidence_knih\ConsoleApp1\books.json", json);
                                             break;
                                         }
                                     }
@@ -236,7 +228,7 @@ namespace ConsoleApp1
                                             Console.WriteLine("Book " + name + " have been succefuly added.");
 
                                             string json = JsonConvert.SerializeObject(books, settings);
-                                            File.WriteAllText(@"C:\Users\sadbo\Desktop\Škola\C#\EvidenceKnih\ConsoleApp1\ConsoleApp1\books.json", json);
+                                            File.WriteAllText(@"C:\Users\sadbo\Desktop\Škola\C#\Evidence_knih\ConsoleApp1\books.json", json);
                                             break;
                                         }
                                     }
@@ -254,9 +246,18 @@ namespace ConsoleApp1
                                     }
                                     if (int.TryParse(deleteID, out num))
                                     {
-                                        
                                         int delete = int.Parse(deleteID);
-                                        books.RemoveAt(delete - 1);
+                                        if (delete > books.Count())
+                                        {
+                                            Console.WriteLine("Wrong index");
+                                        }
+                                        else
+                                        {
+                                            books.RemoveAt(delete);
+                                            string json = JsonConvert.SerializeObject(books, settings);
+                                            File.WriteAllText(@"C:\Users\sadbo\Desktop\Škola\C#\Evidence_knih\ConsoleApp1\books.json", json);
+                                            break;
+                                        }
                                     }
                                 }
                             }                            
@@ -265,8 +266,24 @@ namespace ConsoleApp1
                         {
                             Console.Clear();
                             Console.WriteLine("Logged as Admin");
-                            Console.WriteLine("1) Delete user");
+                            Console.WriteLine("1) Save Books to excel");
+                            Console.WriteLine("2) Delete user");
                             choice = Console.ReadKey();
+
+                            if (choice.KeyChar == '1')
+                            {
+                                using (var p = new ExcelPackage())
+                                {
+                                    var ws = p.Workbook.Worksheets.Add("MySheet");
+                                    for (int i = 0; i < books.Count(); i++)
+                                    {
+                                        ws.Cells[i + 1, 1].Value = books[i].Name;
+                                        ws.Cells[i + 1, 2].Value = books[i].Isbn;
+                                    }
+                                    p.SaveAs(new FileInfo(@"C:\Users\sadbo\Desktop\Škola\C#\Evidence_knih\ConsoleApp1\excel.xlsx"));
+                                }
+                            }
+
                         }
                     }
                 }
