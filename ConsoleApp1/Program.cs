@@ -15,7 +15,7 @@ namespace ConsoleApp1
         {
             bool App = true;
 
-            List<User> listOfUsers = new List<User>();        
+            List<User> listOfUsers = new List<User>();
             bool loggedin = false;
             List<Book> books = new List<Book>();
             Admin admin = new Admin();
@@ -25,12 +25,30 @@ namespace ConsoleApp1
                 TypeNameHandling = TypeNameHandling.All
             };
 
+            using(var excel = new ExcelPackage(new FileInfo("excel.xlsx")))
+            {
 
-            string jsonFromFile = File.ReadAllText(@"C:\Users\sadbo\Desktop\Škola\C#\Evidence_knih\ConsoleApp1\books.json");
-            books = JsonConvert.DeserializeObject<List<Book>>(jsonFromFile, settings);
+            }
 
-            jsonFromFile = File.ReadAllText(@"C:\Users\sadbo\Desktop\Škola\C#\Evidence_knih\ConsoleApp1\users.json");
-            listOfUsers = JsonConvert.DeserializeObject<List<User>>(jsonFromFile, settings);
+            if (!File.Exists("books.json"))
+            {          
+                string json = JsonConvert.SerializeObject(books, settings);
+                File.WriteAllText(@"\books.json", json);
+            }
+            else if (!File.Exists("users.json"))
+            {
+                string json = JsonConvert.SerializeObject(listOfUsers, settings);
+                File.WriteAllText(@"\users.json", json);
+            }
+            else if (File.Exists("users.json") & File.Exists("books.json"))
+            {
+                string jsonFromFile = File.ReadAllText(@"\books.json");
+                books = JsonConvert.DeserializeObject<List<Book>>(jsonFromFile, settings);
+
+                jsonFromFile = File.ReadAllText(@"\users.json");
+                listOfUsers = JsonConvert.DeserializeObject<List<User>>(jsonFromFile, settings);
+            }
+
             while (App)
             {
                 bool registration = true;
@@ -64,14 +82,14 @@ namespace ConsoleApp1
                             Console.WriteLine("Registration succeful.");
 
                             string json = JsonConvert.SerializeObject(listOfUsers, settings);
-                            File.WriteAllText(@"C:\Users\sadbo\Desktop\Škola\C#\EvidenceKnih\ConsoleApp1\ConsoleApp1\users.json", json);
-                        
+                            File.WriteAllText(@"\users.json", json);
+                        }
                     }
                 }
                 else if (choice.KeyChar == '2')
                 {
                     while (login)
-                    {                        
+                    {
                         Console.Clear();
                         Console.WriteLine("Login");
                         Console.WriteLine("");
@@ -123,11 +141,11 @@ namespace ConsoleApp1
                                     }
                                 }
                             }
-                        }                    
+                        }
                     }
                     while (loggedin)
                     {
-                        if(userType == 0)
+                        if (userType == 0)
                         {
                             Console.Clear();
                             Console.WriteLine("Logged as " + currentUser);
@@ -169,13 +187,13 @@ namespace ConsoleApp1
                                         string sizemb = Console.ReadLine();
                                         Console.WriteLine("");
                                         int num;
-                                        while(!int.TryParse(sizemb, out num))
+                                        while (!int.TryParse(sizemb, out num))
                                         {
                                             Console.Write("Size (in mb) of the book:");
                                             sizemb = Console.ReadLine();
                                             Console.WriteLine("");
                                         }
-                                        if(int.TryParse(sizemb, out num))
+                                        if (int.TryParse(sizemb, out num))
                                         {
                                             Ebook book = new Ebook();
                                             book.Name = name;
@@ -186,7 +204,7 @@ namespace ConsoleApp1
                                             Console.WriteLine("Book " + name + " have been succefuly added.");
 
                                             string json = JsonConvert.SerializeObject(books, settings);
-                                            File.WriteAllText(@"C:\Users\sadbo\Desktop\Škola\C#\Evidence_knih\ConsoleApp1\books.json", json);
+                                            File.WriteAllText(@"\books.json", json);
                                             break;
                                         }
                                     }
@@ -224,8 +242,7 @@ namespace ConsoleApp1
                                             Console.WriteLine("Book " + name + " have been succefuly added.");
 
                                             string json = JsonConvert.SerializeObject(books, settings);
-                                            File.WriteAllText(@"C:\Users\sadbo\Desktop\Škola\C#\Evidence_knih\ConsoleApp1\books.json", json);
-                                            break;
+                                            File.WriteAllText(@"\books.json", json);
                                         }
                                     }
                                 }
@@ -261,14 +278,14 @@ namespace ConsoleApp1
                                         {
                                             books.RemoveAt(delete);
                                             string json = JsonConvert.SerializeObject(books, settings);
-                                            File.WriteAllText(@"C:\Users\sadbo\Desktop\Škola\C#\Evidence_knih\ConsoleApp1\books.json", json);
+                                            File.WriteAllText(@"D:\maceklu161\EvidenceKnih\ConsoleApp1\books.json", json);
                                             break;
                                         }
                                     }
                                 }
-                            }                            
+                            }
                         }
-                        else if(userType == 1)
+                        else if (userType == 1)
                         {
                             Console.Clear();
                             Console.WriteLine("Logged as Admin");
@@ -285,11 +302,21 @@ namespace ConsoleApp1
                                     {
                                         ws.Cells[i + 1, 1].Value = books[i].Name;
                                         ws.Cells[i + 1, 2].Value = books[i].Isbn;
+                                        if (books[i] is Ebook ebook)
+                                        {
+                                            ws.Cells[i + 1, 3].Value = ebook.Uri;
+                                            ws.Cells[i + 1, 4].Value = ebook.Sizemb;
+                                        }
+                                        else if (books[i] is PaperBook paperbook)
+                                        {
+                                            ws.Cells[i + 1, 3].Value = paperbook.Weight;
+                                            ws.Cells[i + 1, 4].Value = paperbook.Stock;
+                                        }
+
                                     }
-                                    p.SaveAs(new FileInfo(@"C:\Users\sadbo\Desktop\Škola\C#\Evidence_knih\ConsoleApp1\excel.xlsx"));
+                                    p.SaveAs(new FileInfo(@"D:\maceklu161\EvidenceKnih\ConsoleApp1\excel.xlsx"));
                                 }
                             }
-
                         }
                     }
                 }

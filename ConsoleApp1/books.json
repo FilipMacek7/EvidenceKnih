@@ -1,1 +1,1 @@
-{"$type":"System.Collections.Generic.List`1[[ConsoleApp1.Book, ConsoleApp1]], mscorlib","$values":[{"$type":"ConsoleApp1.PaperBook, ConsoleApp1","Isbn":2156809,"Weight":5,"Stock":5,"Name":"sdsa"},{"$type":"ConsoleApp1.Ebook, ConsoleApp1","Isbn":3861868,"Uri":"5","Sizemb":5,"Name":"asddas"}]}
+{"$type":"System.Collections.Generic.List`1[[ConsoleApp1.Book, ConsoleApp1]], mscorlib","$values":[]}
