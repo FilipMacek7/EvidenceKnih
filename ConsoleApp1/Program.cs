@@ -31,18 +31,6 @@ namespace ConsoleApp1
 
             jsonFromFile = File.ReadAllText(@"C:\Users\sadbo\Desktop\Škola\C#\Evidence_knih\ConsoleApp1\users.json");
             listOfUsers = JsonConvert.DeserializeObject<List<User>>(jsonFromFile, settings);
-            void showBooks()
-            {
-                for (int i = 0; i < books.Count(); i++)
-                {
-                    Console.Write(i + " ");
-                    Console.Write(books[i].Name);
-                    Console.Write(" - ");
-                    Console.Write(books[i].Isbn);
-                    Console.WriteLine("");
-
-                }
-            }
             while (App)
             {
                 bool registration = true;
@@ -77,7 +65,7 @@ namespace ConsoleApp1
 
                             string json = JsonConvert.SerializeObject(listOfUsers, settings);
                             File.WriteAllText(@"C:\Users\sadbo\Desktop\Škola\C#\EvidenceKnih\ConsoleApp1\ConsoleApp1\users.json", json);
-                        }
+                        
                     }
                 }
                 else if (choice.KeyChar == '2')
@@ -148,7 +136,15 @@ namespace ConsoleApp1
                             Console.WriteLine("3) Delete a book");
                             Console.WriteLine("");
                             Console.WriteLine("Your books:");
-                            showBooks();
+                            for (int i = 0; i < books.Count(); i++)
+                            {
+                                Console.Write(i + " ");
+                                Console.Write(books[i].Name);
+                                Console.Write(" - ");
+                                Console.Write(books[i].Isbn);
+                                Console.WriteLine("");
+
+                            }
                             choice = Console.ReadKey();
                             while (true)
                             {
@@ -241,6 +237,16 @@ namespace ConsoleApp1
                                     int num;
                                     while (!int.TryParse(deleteID, out num))
                                     {
+                                        for (int i = 0; i < books.Count(); i++)
+                                        {
+                                            Console.Write(i + " ");
+                                            Console.Write(books[i].Name);
+                                            Console.Write(" - ");
+                                            Console.Write(books[i].Isbn);
+                                            Console.WriteLine("");
+
+                                        }
+                                        Console.WriteLine();
                                         Console.WriteLine("Enter ID of book which you want to be deleted.");
                                         deleteID = Console.ReadLine();
                                     }
