@@ -92,7 +92,7 @@ namespace ConsoleApp1
                 string json = JsonConvert.SerializeObject(listOfUsers, settings);
                 File.WriteAllText(@"users.json", json);
             }
-            else if (File.Exists("users.json") & File.Exists("books.json"))
+            else if (File.Exists("users.json"))
             {
                 string jsonFromFile = File.ReadAllText(@"users.json");
                 listOfUsers = JsonConvert.DeserializeObject<List<User>>(jsonFromFile, settings);
