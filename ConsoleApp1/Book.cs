@@ -10,6 +10,6 @@ namespace ConsoleApp1
     {
         public string Name { get; set; }
         public long Isbn = new Random().Next(1000000, 9999999);
-        List<Author> AuthorList = new List<Author>();
+        public Author Author { get; set; }
     }
 }
